@@ -26,14 +26,15 @@
          ↕ 对接 CVAT (标注) · Grafana/Prometheus (监控)
 ```
 
-### 0.2 技术栈（建议）
-- **后端**：Python 3.11 + FastAPI + SQLAlchemy 2.x + Alembic + Celery；或 Go + Gin（高并发模块）
+### 0.2 技术栈（已定稿，详见 [TECHNICAL_PLAN.md](./TECHNICAL_PLAN.md)）
+- **后端**：Python 3.11 + FastAPI + SQLAlchemy 2.x (asyncpg) + Alembic + Celery
 - **前端**：React 18 + TypeScript + Vite + Ant Design Pro + ECharts
-- **边缘端**：Python（或 Go）Agent，`paho-mqtt` + `opencv-python` + `systemd` 守护
-- **数据库**：Postgres 16（+ TimescaleDB 用于时序）、Redis 7、MinIO（S3 兼容）、Elasticsearch（日志/检索，可选）
-- **消息**：EMQX 5.x（MQTT）+ Kafka（内部事件总线，可选 Redis Streams 起步）
+- **边缘端**：Python Agent，paho-mqtt + opencv-python + pyserial + systemd
+- **数据库**：Postgres 16 + TimescaleDB、Redis 7、MinIO（S3 兼容）
+- **消息**：EMQX 5.x（MQTT）+ Redis Streams（内部事件总线）
 - **部署**：Docker Compose（开发）→ K8s + Helm（生产），GitHub Actions CI/CD
-- **观测**：Prometheus + Grafana + Loki + OpenTelemetry + Sentry
+- **监控**：Prometheus + Grafana + Loki + OpenTelemetry + Sentry
+- **架构参考**：芋道源码（yudao）模块化 + 多租户 + 数据权限设计
 
 ---
 
