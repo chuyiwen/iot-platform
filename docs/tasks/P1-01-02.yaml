@@ -1,0 +1,56 @@
+id: P1-01-02
+title: 初始化 docker-compose 开发环境
+phase: 1
+module: infra
+model: haiku
+status: pending
+created_at: 2026-04-13
+
+depends_on:
+  - P1-01-01
+
+contracts:
+  - docs/TECHNICAL_PLAN.md
+
+context_files:
+  - backend/Dockerfile
+  - backend/.env.example
+
+produces:
+  - deploy/docker-compose.yml
+  - deploy/postgres/init.sql
+  - deploy/emqx/emqx.conf
+  - deploy/emqx/acl.conf
+  - deploy/README.md
+
+requirements:
+  - docker-compose 包含服务: postgres (带 TimescaleDB 扩展), redis, minio, emqx, backend
+  - postgres 初始化脚本创建数据库 iot_platform 并启用 timescaledb 扩展
+  - minio 预创建 bucket: iot-images, iot-firmware
+  - emqx 启用 HTTP Auth 与 ACL，回调地址指向 backend:8000
+  - 所有服务有 healthcheck
+  - 所有端口暴露到宿主机（开发方便），backend depends_on 其他服务 healthy
+  - 使用 .env 文件读取密码等配置
+
+acceptance:
+  tests: []
+  commands:
+    - cd deploy && docker compose config
+    - cd deploy && docker compose up -d postgres redis minio
+    - cd deploy && docker compose ps
+  coverage: 0
+
+token_budget:
+  input: 5000
+  output: 4000
+  total: 9000
+
+actual_tokens:
+  input: 0
+  output: 0
+  total: 0
+
+notes: |
+  - 只做 compose 配置，不启动 backend（backend 还没有实质代码）
+  - emqx 使用 5.x 的配置格式
+  - postgres 镜像用 timescale/timescaledb:latest-pg16

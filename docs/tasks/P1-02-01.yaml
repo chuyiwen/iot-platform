@@ -1,0 +1,62 @@
+id: P1-02-01
+title: 实现数据库会话与基础模型
+phase: 1
+module: infra
+model: sonnet
+status: pending
+created_at: 2026-04-13
+
+depends_on:
+  - P1-01-01
+
+contracts:
+  - docs/TECHNICAL_PLAN.md
+
+context_files:
+  - backend/app/core/config.py
+
+produces:
+  - backend/app/core/db/__init__.py
+  - backend/app/core/db/session.py
+  - backend/app/core/db/base_model.py
+  - backend/app/core/db/tenant_model.py
+  - backend/app/core/db/crud_base.py
+  - backend/tests/unit/core/test_crud_base.py
+
+requirements:
+  - session.py 提供 async_engine, AsyncSessionLocal, get_db() 依赖函数
+  - BaseModel 含字段 id, created_at, updated_at, creator_id, updater_id, deleted (对应 TECHNICAL_PLAN 3.5)
+  - TenantModel 继承 BaseModel，增加 tenant_id 字段 + 索引
+  - CRUDBase 是 Generic[ModelType, CreateSchema, UpdateSchema]，提供：
+      - get(db, id)
+      - get_multi(db, skip, limit, filters) -> (list, total)
+      - create(db, obj_in) -> ModelType
+      - update(db, db_obj, obj_in) -> ModelType
+      - soft_delete(db, id) -> None
+  - 所有方法异步
+  - CRUDBase 的 create/update 自动填充 creator_id/updater_id（从 context 读取）
+  - 测试覆盖 CRUDBase 所有方法，使用 SQLite in-memory 作为测试数据库
+
+acceptance:
+  tests:
+    - backend/tests/unit/core/test_crud_base.py
+  commands:
+    - cd backend && uv run pytest tests/unit/core/test_crud_base.py -v
+    - cd backend && uv run ruff check app/core/db/
+    - cd backend && uv run mypy app/core/db/
+  coverage: 85
+
+token_budget:
+  input: 8000
+  output: 6000
+  total: 14000
+
+actual_tokens:
+  input: 0
+  output: 0
+  total: 0
+
+notes: |
+  - 不要实现多租户过滤器（那是 P1-03-xx 的任务）
+  - CRUDBase 不需要感知 tenant_id，TenantModel 子类会自动携带
+  - creator_id/updater_id 可先接受从参数传入，后续接认证后再改为读 context

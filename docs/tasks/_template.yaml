@@ -1,0 +1,67 @@
+# 任务模板 — 复制此文件并改名为 P<phase>-<module>-<seq>.yaml
+# 例如: P1-05-03.yaml (Phase 1, system 模块, 第 3 个任务)
+
+id: PX-XX-XX
+title: 简短任务标题（动词开头）
+phase: 1                            # 1-5
+module: system                      # system | device | telemetry | alarm | image | weighbridge | appointment | dispatch | infra | edge | frontend
+model: haiku                        # haiku | sonnet | opus
+status: pending                     # pending | in_progress | completed | blocked
+created_at: 2026-04-13
+
+# ============ 依赖声明 ============
+depends_on: []                      # 前置任务 ID 列表
+
+# ============ 契约文件（只读，任务不可修改） ============
+contracts: []
+# 示例:
+#   - docs/contracts/schemas/system.py
+#   - docs/contracts/models/01_system.sql
+#   - docs/contracts/protocols/system_api.py
+
+# ============ 上下文文件（由前置任务产出） ============
+context_files: []
+# 示例:
+#   - backend/app/core/db/crud_base.py
+
+# ============ 产出文件 ============
+produces: []
+# 示例:
+#   - backend/app/modules/system/service/user_service.py
+
+# ============ 实现要求（可验证的具体需求） ============
+requirements: []
+# 示例:
+#   - 实现 contracts/protocols/system_api.py 中 UserServiceProtocol 的所有方法
+#   - 密码使用 passlib bcrypt 加密
+#   - 违反业务规则时抛出 errors.yaml 中定义的错误码
+
+# ============ 验收标准 ============
+acceptance:
+  tests: []                         # 必须通过的测试文件
+  commands: []                      # 必须全部成功的命令
+  coverage: 80                      # 最低覆盖率（%）
+# 示例:
+#   tests:
+#     - tests/unit/system/test_user_service.py
+#   commands:
+#     - pytest tests/unit/system/test_user_service.py -v
+#     - ruff check backend/app/modules/system/service/user_service.py
+#     - mypy backend/app/modules/system/service/user_service.py
+#   coverage: 85
+
+# ============ Token 预算（超了必须拆分） ============
+token_budget:
+  input: 8000
+  output: 4000
+  total: 12000
+
+# ============ 实际消耗（完成后回填） ============
+actual_tokens:
+  input: 0
+  output: 0
+  total: 0
+
+# ============ 备注 ============
+notes: |
+  额外说明、注意事项、参考资料等

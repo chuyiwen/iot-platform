@@ -1,0 +1,56 @@
+id: P1-01-01
+title: 初始化后端项目脚手架
+phase: 1
+module: infra
+model: haiku
+status: pending
+created_at: 2026-04-13
+
+depends_on: []
+
+contracts:
+  - docs/TECHNICAL_PLAN.md
+
+context_files: []
+
+produces:
+  - backend/pyproject.toml
+  - backend/app/__init__.py
+  - backend/app/main.py
+  - backend/app/core/__init__.py
+  - backend/app/core/config.py
+  - backend/.env.example
+  - backend/Dockerfile
+  - backend/.dockerignore
+  - Makefile
+
+requirements:
+  - pyproject.toml 使用 uv 格式，包含 TECHNICAL_PLAN 第九章列出的全部核心依赖
+  - config.py 用 Pydantic Settings 读取环境变量，区分 dev/staging/prod
+  - main.py 创建 FastAPI 实例，注册 /health 端点返回 {"status":"ok"}
+  - Dockerfile 基于 python:3.11-slim，使用 uv 安装依赖，非 root 用户运行
+  - Makefile 提供: install / dev / test / lint / format / clean 目标
+  - .env.example 包含所有配置项默认值（不含真实密钥）
+
+acceptance:
+  tests: []
+  commands:
+    - cd backend && uv sync
+    - cd backend && uv run python -c "from app.main import app; print(app.title)"
+    - cd backend && uv run ruff check app/
+  coverage: 0
+
+token_budget:
+  input: 6000
+  output: 5000
+  total: 11000
+
+actual_tokens:
+  input: 0
+  output: 0
+  total: 0
+
+notes: |
+  - 这是第一个任务，没有契约可依赖，直接参考 TECHNICAL_PLAN.md 第九章
+  - 不要实现任何业务逻辑，只做脚手架
+  - 不需要数据库连接代码，那是 P1-02-xx 的任务
