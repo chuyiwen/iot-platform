@@ -1,8 +1,7 @@
 # SQLAlchemy ORM abstract base for multi-tenant models.
-from sqlalchemy import BigInteger
 from sqlalchemy.orm import Mapped, mapped_column
 
-from .base_model import BaseModel
+from .base_model import BaseModel, _BigInt
 
 
 class TenantModel(BaseModel):
@@ -10,4 +9,4 @@ class TenantModel(BaseModel):
 
     __abstract__ = True
 
-    tenant_id: Mapped[int] = mapped_column(BigInteger, nullable=False, index=True)
+    tenant_id: Mapped[int] = mapped_column(_BigInt, nullable=False, index=True)

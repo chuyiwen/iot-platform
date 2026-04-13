@@ -65,10 +65,8 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
                 col = getattr(self.model, field)
                 base_where.append(col == value)
 
-        # --- total count (separate query, no subquery) ---
-        count_stmt = select(func.count()).select_from(
-            select(self.model).where(*base_where).subquery()
-        )
+        # --- total count (no subquery: select_from the model table directly) ---
+        count_stmt = select(func.count()).select_from(self.model).where(*base_where)
         total: int = (await db.execute(count_stmt)).scalar_one()
 
         # --- data query ---

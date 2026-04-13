@@ -22,9 +22,6 @@ TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 class TestItem(BaseModel):
     __tablename__ = "test_items"
 
-    # SQLite does not support BigInteger autoincrement — override with Integer.
-    # Production code targets PostgreSQL (BIGSERIAL) and is unaffected.
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(100))
     value: Mapped[int] = mapped_column(Integer, default=0)
 

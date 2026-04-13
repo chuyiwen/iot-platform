@@ -2,8 +2,12 @@
 # All application models should inherit from BaseModel (or TenantModel).
 from datetime import datetime
 
-from sqlalchemy import BigInteger, Boolean, DateTime, func
+from sqlalchemy import BigInteger, Boolean, DateTime, Integer, func
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+# BigInteger that degrades gracefully to INTEGER on SQLite (required for
+# autoincrement primary keys; PostgreSQL always sees BIGINT).
+_BigInt = BigInteger().with_variant(Integer, "sqlite")
 
 
 class Base(DeclarativeBase):
@@ -25,7 +29,7 @@ class BaseModel(Base):
 
     __abstract__ = True
 
-    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(_BigInt, primary_key=True, autoincrement=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -37,6 +41,6 @@ class BaseModel(Base):
         onupdate=func.now(),
         nullable=False,
     )
-    creator_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
-    updater_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    creator_id: Mapped[int | None] = mapped_column(_BigInt, nullable=True)
+    updater_id: Mapped[int | None] = mapped_column(_BigInt, nullable=True)
     deleted: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
