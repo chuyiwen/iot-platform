@@ -1,0 +1,325 @@
+# IoT SaaS Platform — OpenAPI 路径骨架
+#
+# 用于：
+# 1) 前端代码生成（openapi-typescript-codegen）
+# 2) 任务执行时确认接口路径与方法
+# 3) Mock 服务（prism）
+#
+# 完整 OpenAPI schema 通过 FastAPI 自动生成 /openapi.json，
+# 本文件仅维护路径清单与约定，避免人工维护字段双写。
+openapi: 3.1.0
+info:
+  title: IoT SaaS Platform API
+  version: 0.1.0
+  description: |
+    多租户 IoT 平台 REST API。所有接口默认：
+    - 鉴权：Bearer JWT（除 /auth/login、/health 外）
+    - 响应包装：ApiResponse<T>（schemas/common.py:ApiResponse）
+    - 错误码：见 contracts/errors.yaml
+    - 分页：使用 PageRequest / PageResponse
+    - 多租户：tenant_id 从 JWT 中解析，无需显式传递
+
+servers:
+  - url: /api/v1
+    description: v1 主入口
+
+tags:
+  - name: auth
+  - name: tenant
+  - name: dept
+  - name: user
+  - name: role
+  - name: menu
+  - name: api-key
+  - name: audit-log
+  - name: oauth2
+  - name: product
+  - name: device
+  - name: device-group
+  - name: device-shadow
+  - name: device-command
+  - name: firmware
+  - name: ota
+  - name: telemetry
+  - name: image
+  - name: cvat
+  - name: weighbridge
+  - name: appointment
+  - name: dispatch
+  - name: infra
+
+# ============================================================
+# 路径骨架（仅列方法 + summary，request/response 模型通过 FastAPI 自动生成）
+# ============================================================
+paths:
+  # ---------- Auth ----------
+  /auth/login:
+    post: { tags: [auth], summary: 用户登录, security: [] }
+  /auth/logout:
+    post: { tags: [auth], summary: 注销 }
+  /auth/refresh:
+    post: { tags: [auth], summary: 刷新 token, security: [] }
+  /auth/captcha:
+    get: { tags: [auth], summary: 获取图形验证码, security: [] }
+  /auth/me:
+    get: { tags: [auth], summary: 当前用户信息 }
+  /auth/me/permissions:
+    get: { tags: [auth], summary: 当前用户权限列表 }
+  /auth/me/menus:
+    get: { tags: [auth], summary: 当前用户可见菜单树 }
+
+  # ---------- Tenant（平台超管） ----------
+  /system/tenants:
+    get:  { tags: [tenant], summary: 租户分页 }
+    post: { tags: [tenant], summary: 创建租户 }
+  /system/tenants/{id}:
+    get:    { tags: [tenant], summary: 租户详情 }
+    put:    { tags: [tenant], summary: 修改租户 }
+    delete: { tags: [tenant], summary: 删除租户 }
+  /system/tenants/{id}/status:
+    put: { tags: [tenant], summary: 启用/禁用租户 }
+
+  # ---------- Dept ----------
+  /system/depts:
+    get:  { tags: [dept], summary: 部门列表 }
+    post: { tags: [dept], summary: 创建部门 }
+  /system/depts/tree:
+    get: { tags: [dept], summary: 部门树 }
+  /system/depts/{id}:
+    get:    { tags: [dept], summary: 部门详情 }
+    put:    { tags: [dept], summary: 修改部门 }
+    delete: { tags: [dept], summary: 删除部门 }
+
+  # ---------- User ----------
+  /system/users:
+    get:  { tags: [user], summary: 用户分页 }
+    post: { tags: [user], summary: 创建用户 }
+  /system/users/{id}:
+    get:    { tags: [user], summary: 用户详情 }
+    put:    { tags: [user], summary: 修改用户 }
+    delete: { tags: [user], summary: 删除用户 }
+  /system/users/{id}/password:
+    put: { tags: [user], summary: 重置密码 }
+  /system/users/{id}/status:
+    put: { tags: [user], summary: 启用/禁用用户 }
+  /system/users/me/password:
+    put: { tags: [user], summary: 修改自己的密码 }
+
+  # ---------- Role ----------
+  /system/roles:
+    get:  { tags: [role], summary: 角色分页 }
+    post: { tags: [role], summary: 创建角色 }
+  /system/roles/all:
+    get: { tags: [role], summary: 全部角色（下拉用） }
+  /system/roles/{id}:
+    get:    { tags: [role], summary: 角色详情 }
+    put:    { tags: [role], summary: 修改角色 }
+    delete: { tags: [role], summary: 删除角色 }
+  /system/roles/{id}/menus:
+    get: { tags: [role], summary: 角色菜单 id 列表 }
+    put: { tags: [role], summary: 分配菜单 }
+
+  # ---------- Menu ----------
+  /system/menus:
+    get:  { tags: [menu], summary: 菜单列表 }
+    post: { tags: [menu], summary: 创建菜单 }
+  /system/menus/tree:
+    get: { tags: [menu], summary: 菜单树 }
+  /system/menus/{id}:
+    get:    { tags: [menu], summary: 菜单详情 }
+    put:    { tags: [menu], summary: 修改菜单 }
+    delete: { tags: [menu], summary: 删除菜单 }
+
+  # ---------- API Key ----------
+  /system/api-keys:
+    get:  { tags: [api-key], summary: API Key 列表 }
+    post: { tags: [api-key], summary: 创建 API Key（仅一次返回明文） }
+  /system/api-keys/{id}:
+    delete: { tags: [api-key], summary: 删除 API Key }
+  /system/api-keys/{id}/status:
+    put: { tags: [api-key], summary: 启用/禁用 }
+
+  # ---------- Audit Log ----------
+  /system/audit-logs:
+    get: { tags: [audit-log], summary: 审计日志分页 }
+  /system/audit-logs/{id}:
+    get: { tags: [audit-log], summary: 审计日志详情 }
+
+  # ---------- OAuth2 Client ----------
+  /system/oauth2-clients:
+    get:  { tags: [oauth2], summary: 客户端列表 }
+    post: { tags: [oauth2], summary: 创建客户端 }
+  /system/oauth2-clients/{id}:
+    get:    { tags: [oauth2], summary: 客户端详情 }
+    put:    { tags: [oauth2], summary: 修改客户端 }
+    delete: { tags: [oauth2], summary: 删除客户端 }
+
+  # ---------- Product ----------
+  /device/products:
+    get:  { tags: [product], summary: 产品分页 }
+    post: { tags: [product], summary: 创建产品 }
+  /device/products/all:
+    get: { tags: [product], summary: 全部产品（下拉） }
+  /device/products/{id}:
+    get:    { tags: [product], summary: 产品详情 }
+    put:    { tags: [product], summary: 修改产品 }
+    delete: { tags: [product], summary: 删除产品 }
+
+  # ---------- Device ----------
+  /device/devices:
+    get:  { tags: [device], summary: 设备分页 }
+    post: { tags: [device], summary: 创建设备 }
+  /device/devices/{id}:
+    get:    { tags: [device], summary: 设备详情 }
+    put:    { tags: [device], summary: 修改设备 }
+    delete: { tags: [device], summary: 删除设备 }
+  /device/devices/{id}/reset-secret:
+    post: { tags: [device], summary: 重置设备密钥 }
+  /device/devices/{id}/status:
+    put: { tags: [device], summary: 启用/禁用设备 }
+  /device/devices/{id}/online-logs:
+    get: { tags: [device], summary: 设备上下线日志 }
+  /device/devices/batch:
+    delete: { tags: [device], summary: 批量删除 }
+  /device/devices/import:
+    post: { tags: [device], summary: 批量导入 (CSV/Excel) }
+  /device/devices/export:
+    get: { tags: [device], summary: 批量导出 }
+
+  # ---------- Device Group ----------
+  /device/groups:
+    get:  { tags: [device-group], summary: 分组列表 }
+    post: { tags: [device-group], summary: 创建分组 }
+  /device/groups/tree:
+    get: { tags: [device-group], summary: 分组树 }
+  /device/groups/{id}:
+    get:    { tags: [device-group], summary: 分组详情 }
+    put:    { tags: [device-group], summary: 修改分组 }
+    delete: { tags: [device-group], summary: 删除分组 }
+  /device/groups/{id}/devices:
+    get:    { tags: [device-group], summary: 分组下设备 }
+    post:   { tags: [device-group], summary: 绑定设备到分组 }
+    delete: { tags: [device-group], summary: 从分组解绑设备 }
+
+  # ---------- Device Shadow ----------
+  /device/devices/{id}/shadow:
+    get: { tags: [device-shadow], summary: 获取影子 }
+    put: { tags: [device-shadow], summary: 下发期望态 }
+
+  # ---------- Device Command ----------
+  /device/devices/{id}/commands:
+    get:  { tags: [device-command], summary: 设备指令历史 }
+    post: { tags: [device-command], summary: 下发指令 }
+  /device/commands/{command_id}:
+    get: { tags: [device-command], summary: 指令详情/执行结果 }
+
+  # ---------- Firmware ----------
+  /device/firmwares:
+    get:  { tags: [firmware], summary: 固件列表 }
+    post: { tags: [firmware], summary: 创建固件 }
+  /device/firmwares/upload:
+    post: { tags: [firmware], summary: 上传固件文件，返回 file_key/file_url }
+  /device/firmwares/{id}:
+    get:    { tags: [firmware], summary: 固件详情 }
+    put:    { tags: [firmware], summary: 修改固件 }
+    delete: { tags: [firmware], summary: 删除固件 }
+  /device/firmwares/{id}/publish:
+    put: { tags: [firmware], summary: 发布/下架 }
+
+  # ---------- OTA ----------
+  /device/ota/jobs:
+    get:  { tags: [ota], summary: OTA 任务列表 }
+    post: { tags: [ota], summary: 创建 OTA 任务 }
+  /device/ota/jobs/{id}:
+    get:    { tags: [ota], summary: 任务详情 }
+    delete: { tags: [ota], summary: 取消任务 }
+  /device/ota/jobs/{id}/start:
+    post: { tags: [ota], summary: 开始执行 }
+  /device/ota/jobs/{id}/pause:
+    post: { tags: [ota], summary: 暂停 }
+  /device/ota/jobs/{id}/resume:
+    post: { tags: [ota], summary: 恢复 }
+  /device/ota/jobs/{id}/devices:
+    get: { tags: [ota], summary: 任务下设备进度 }
+
+  # ---------- Telemetry（占位，模块独立设计） ----------
+  /telemetry/devices/{id}/properties:
+    get: { tags: [telemetry], summary: 历史属性 }
+  /telemetry/devices/{id}/events:
+    get: { tags: [telemetry], summary: 历史事件 }
+  /telemetry/devices/{id}/latest:
+    get: { tags: [telemetry], summary: 最新一条 }
+
+  # ---------- Image / CVAT ----------
+  /image/uploads:
+    post: { tags: [image], summary: 设备上报图像（HTTP 通道，备用） }
+  /image/datasets:
+    get: { tags: [image], summary: 图像数据集列表 }
+  /image/datasets/{id}/items:
+    get: { tags: [image], summary: 数据集图像 }
+  /cvat/projects/{id}/sync:
+    post: { tags: [cvat], summary: 同步到 CVAT 项目 }
+  /cvat/projects/{id}/annotations:
+    get: { tags: [cvat], summary: 拉取标注结果 }
+
+  # ---------- Weighbridge ----------
+  /weighbridge/stations:
+    get:  { tags: [weighbridge], summary: 地磅站点列表 }
+    post: { tags: [weighbridge], summary: 创建站点 }
+  /weighbridge/records:
+    get:  { tags: [weighbridge], summary: 称重记录分页 }
+    post: { tags: [weighbridge], summary: 手工补录 }
+  /weighbridge/records/{id}:
+    get: { tags: [weighbridge], summary: 称重记录详情 }
+  /weighbridge/records/{id}/void:
+    post: { tags: [weighbridge], summary: 作废 }
+
+  # ---------- Appointment ----------
+  /appointment/bookings:
+    get:  { tags: [appointment], summary: 预约列表 }
+    post: { tags: [appointment], summary: 创建预约 }
+  /appointment/bookings/{id}:
+    get:    { tags: [appointment], summary: 预约详情 }
+    delete: { tags: [appointment], summary: 取消预约 }
+  /appointment/bookings/{id}/qrcode:
+    get: { tags: [appointment], summary: 获取预约二维码 }
+  /appointment/scan/{token}:
+    post: { tags: [appointment], summary: 扫码核销, security: [] }
+
+  # ---------- Dispatch ----------
+  /dispatch/vehicles:
+    get:  { tags: [dispatch], summary: 车辆列表 }
+    post: { tags: [dispatch], summary: 注册车辆 }
+  /dispatch/drivers:
+    get: { tags: [dispatch], summary: 司机列表 }
+  /dispatch/orders:
+    get:  { tags: [dispatch], summary: 调度单列表 }
+    post: { tags: [dispatch], summary: 创建调度单 }
+  /dispatch/orders/{id}/assign:
+    post: { tags: [dispatch], summary: 派车 }
+  /dispatch/orders/{id}/track:
+    get: { tags: [dispatch], summary: 实时轨迹 }
+
+  # ---------- Infra ----------
+  /infra/health:
+    get: { tags: [infra], summary: 健康检查, security: [] }
+  /infra/version:
+    get: { tags: [infra], summary: 版本信息, security: [] }
+  /infra/file/upload:
+    post: { tags: [infra], summary: 通用文件上传 }
+  /infra/file/{key}:
+    get: { tags: [infra], summary: 文件下载 }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+
+security:
+  - bearerAuth: []

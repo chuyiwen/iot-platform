@@ -1,0 +1,284 @@
+# 统一错误码定义
+# 格式: <错误码>: { message: 默认消息, http_status: HTTP 状态码 }
+# 错误码分段:
+#   0xxxx: 通用 (success/auth/permission/validation/...)
+#   1xxxx: 租户 (tenant)
+#   2xxxx: 设备 (device)
+#   3xxxx: 地磅 (weighbridge)
+#   4xxxx: 预约 (appointment)
+#   5xxxx: 调度 (dispatch)
+#   6xxxx: 时序/告警 (telemetry/alarm)
+#   7xxxx: 图像/CVAT (image)
+#   8xxxx: 边缘端 (edge)
+#   9xxxx: 系统内部错误
+
+# ============ 通用 0xxxx ============
+SUCCESS:
+  code: 0
+  message: 成功
+  http_status: 200
+
+UNAUTHORIZED:
+  code: 10001
+  message: 未登录或登录已过期
+  http_status: 401
+
+INVALID_TOKEN:
+  code: 10002
+  message: 无效的访问令牌
+  http_status: 401
+
+TOKEN_EXPIRED:
+  code: 10003
+  message: 访问令牌已过期
+  http_status: 401
+
+REFRESH_TOKEN_INVALID:
+  code: 10004
+  message: 刷新令牌无效或已过期
+  http_status: 401
+
+FORBIDDEN:
+  code: 10101
+  message: 无权限访问
+  http_status: 403
+
+DATA_PERMISSION_DENIED:
+  code: 10102
+  message: 无数据权限
+  http_status: 403
+
+NOT_FOUND:
+  code: 10201
+  message: 资源不存在
+  http_status: 404
+
+VALIDATION_ERROR:
+  code: 10301
+  message: 参数校验失败
+  http_status: 422
+
+DUPLICATE_RESOURCE:
+  code: 10302
+  message: 资源已存在
+  http_status: 409
+
+RATE_LIMITED:
+  code: 10401
+  message: 请求过于频繁
+  http_status: 429
+
+INTERNAL_ERROR:
+  code: 10501
+  message: 服务器内部错误
+  http_status: 500
+
+# ============ 租户 1xxxx ============
+TENANT_NOT_FOUND:
+  code: 11001
+  message: 租户不存在
+  http_status: 404
+
+TENANT_DISABLED:
+  code: 11002
+  message: 租户已禁用
+  http_status: 403
+
+TENANT_EXPIRED:
+  code: 11003
+  message: 租户已过期
+  http_status: 403
+
+TENANT_REQUIRED:
+  code: 11004
+  message: 缺少租户上下文
+  http_status: 400
+
+TENANT_QUOTA_DEVICE_EXCEEDED:
+  code: 11005
+  message: 设备数量已达租户配额上限
+  http_status: 403
+
+TENANT_QUOTA_STORAGE_EXCEEDED:
+  code: 11006
+  message: 存储容量已达租户配额上限
+  http_status: 403
+
+# ============ 用户/账号 1xxxx ============
+USER_NOT_FOUND:
+  code: 11101
+  message: 用户不存在
+  http_status: 404
+
+USER_DISABLED:
+  code: 11102
+  message: 用户已禁用
+  http_status: 403
+
+USER_PASSWORD_INVALID:
+  code: 11103
+  message: 用户名或密码错误
+  http_status: 401
+
+USER_LOGIN_LOCKED:
+  code: 11104
+  message: 账号已锁定，请稍后重试
+  http_status: 403
+
+USERNAME_DUPLICATE:
+  code: 11105
+  message: 用户名已存在
+  http_status: 409
+
+PHONE_DUPLICATE:
+  code: 11106
+  message: 手机号已被使用
+  http_status: 409
+
+EMAIL_DUPLICATE:
+  code: 11107
+  message: 邮箱已被使用
+  http_status: 409
+
+OLD_PASSWORD_WRONG:
+  code: 11108
+  message: 原密码错误
+  http_status: 400
+
+# ============ 角色/菜单/部门 1xxxx ============
+ROLE_NOT_FOUND:
+  code: 11201
+  message: 角色不存在
+  http_status: 404
+
+ROLE_CODE_DUPLICATE:
+  code: 11202
+  message: 角色标识已存在
+  http_status: 409
+
+ROLE_HAS_USERS:
+  code: 11203
+  message: 角色下存在用户，无法删除
+  http_status: 409
+
+MENU_NOT_FOUND:
+  code: 11301
+  message: 菜单不存在
+  http_status: 404
+
+MENU_HAS_CHILDREN:
+  code: 11302
+  message: 存在子菜单，无法删除
+  http_status: 409
+
+DEPT_NOT_FOUND:
+  code: 11401
+  message: 部门不存在
+  http_status: 404
+
+DEPT_HAS_CHILDREN:
+  code: 11402
+  message: 存在子部门，无法删除
+  http_status: 409
+
+DEPT_HAS_USERS:
+  code: 11403
+  message: 部门下存在用户，无法删除
+  http_status: 409
+
+# ============ API Key / OAuth2 1xxxx ============
+API_KEY_INVALID:
+  code: 11501
+  message: API Key 无效
+  http_status: 401
+
+API_KEY_EXPIRED:
+  code: 11502
+  message: API Key 已过期
+  http_status: 401
+
+OAUTH2_CLIENT_NOT_FOUND:
+  code: 11601
+  message: OAuth2 客户端不存在
+  http_status: 404
+
+OAUTH2_CLIENT_SECRET_INVALID:
+  code: 11602
+  message: 客户端密钥错误
+  http_status: 401
+
+OAUTH2_GRANT_TYPE_NOT_ALLOWED:
+  code: 11603
+  message: 不支持的授权模式
+  http_status: 400
+
+OAUTH2_SCOPE_INVALID:
+  code: 11604
+  message: 请求的授权范围无效
+  http_status: 400
+
+# ============ 设备 2xxxx ============
+DEVICE_NOT_FOUND:
+  code: 20001
+  message: 设备不存在
+  http_status: 404
+
+DEVICE_KEY_DUPLICATE:
+  code: 20002
+  message: 设备标识已存在
+  http_status: 409
+
+DEVICE_OFFLINE:
+  code: 20003
+  message: 设备离线
+  http_status: 503
+
+DEVICE_DISABLED:
+  code: 20004
+  message: 设备已禁用
+  http_status: 403
+
+DEVICE_AUTH_FAILED:
+  code: 20005
+  message: 设备认证失败
+  http_status: 401
+
+DEVICE_INACTIVE:
+  code: 20006
+  message: 设备未激活
+  http_status: 403
+
+DEVICE_GROUP_NOT_FOUND:
+  code: 20101
+  message: 设备分组不存在
+  http_status: 404
+
+DEVICE_GROUP_HAS_DEVICES:
+  code: 20102
+  message: 分组下存在设备，无法删除
+  http_status: 409
+
+DEVICE_COMMAND_TIMEOUT:
+  code: 20201
+  message: 设备指令执行超时
+  http_status: 504
+
+DEVICE_COMMAND_FAILED:
+  code: 20202
+  message: 设备指令执行失败
+  http_status: 500
+
+OTA_PACKAGE_NOT_FOUND:
+  code: 20301
+  message: 固件包不存在
+  http_status: 404
+
+OTA_VERSION_INVALID:
+  code: 20302
+  message: 固件版本号格式错误
+  http_status: 400
+
+OTA_HASH_MISMATCH:
+  code: 20303
+  message: 固件文件校验失败
+  http_status: 400

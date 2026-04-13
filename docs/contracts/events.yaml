@@ -1,0 +1,296 @@
+# 内部事件总线契约
+# 基于 Redis Streams 实现，用于跨模块异步通信
+# 命名规范: <module>.<entity>.<action>
+# 事件 payload 必须包含: event_id, tenant_id, timestamp, data
+
+# ============ 系统事件 ============
+system.user.created:
+  description: 用户创建完成
+  payload:
+    user_id: int
+    tenant_id: int
+    username: str
+    creator_id: int
+
+system.user.updated:
+  description: 用户信息变更
+  payload:
+    user_id: int
+    tenant_id: int
+    changes: dict
+
+system.user.deleted:
+  description: 用户被删除
+  payload:
+    user_id: int
+    tenant_id: int
+
+system.user.login:
+  description: 用户登录成功
+  payload:
+    user_id: int
+    tenant_id: int
+    ip: str
+    user_agent: str
+    login_at: datetime
+
+system.user.login_failed:
+  description: 登录失败
+  payload:
+    username: str
+    tenant_id: int
+    ip: str
+    reason: str
+
+system.user.logout:
+  description: 用户登出
+  payload:
+    user_id: int
+    tenant_id: int
+
+system.tenant.created:
+  description: 租户创建
+  payload:
+    tenant_id: int
+    name: str
+
+system.tenant.disabled:
+  description: 租户禁用
+  payload:
+    tenant_id: int
+    reason: str
+
+system.tenant.quota_exceeded:
+  description: 租户配额超限
+  payload:
+    tenant_id: int
+    quota_type: str  # device | storage | bandwidth
+    current: int
+    limit: int
+
+# ============ 设备事件 ============
+device.registered:
+  description: 设备注册
+  payload:
+    device_id: int
+    tenant_id: int
+    device_key: str
+
+device.activated:
+  description: 设备激活
+  payload:
+    device_id: int
+    tenant_id: int
+    activated_at: datetime
+
+device.online:
+  description: 设备上线
+  payload:
+    device_id: int
+    tenant_id: int
+    device_key: str
+    ip: str
+    online_at: datetime
+
+device.offline:
+  description: 设备离线
+  payload:
+    device_id: int
+    tenant_id: int
+    device_key: str
+    last_heartbeat: datetime
+    offline_at: datetime
+
+device.heartbeat:
+  description: 设备心跳（高频，仅用于内部刷新）
+  payload:
+    device_id: int
+    tenant_id: int
+    metrics: dict   # cpu/mem/disk/uptime
+
+device.ip_changed:
+  description: 设备 IP 变更
+  payload:
+    device_id: int
+    tenant_id: int
+    old_ip: str
+    new_ip: str
+
+device.command.sent:
+  description: 指令已发送
+  payload:
+    command_id: int
+    device_id: int
+    tenant_id: int
+    command: str
+
+device.command.acked:
+  description: 设备已确认指令
+  payload:
+    command_id: int
+    device_id: int
+    tenant_id: int
+    response: dict
+
+device.command.timeout:
+  description: 指令超时
+  payload:
+    command_id: int
+    device_id: int
+    tenant_id: int
+
+device.shadow.updated:
+  description: 设备影子更新
+  payload:
+    device_id: int
+    tenant_id: int
+    source: str  # device | platform
+    state: dict
+
+device.ota.started:
+  description: OTA 升级开始
+  payload:
+    job_id: int
+    device_id: int
+    tenant_id: int
+    firmware_version: str
+
+device.ota.progress:
+  description: OTA 升级进度
+  payload:
+    job_id: int
+    device_id: int
+    tenant_id: int
+    progress: int  # 0-100
+
+device.ota.completed:
+  description: OTA 升级完成
+  payload:
+    job_id: int
+    device_id: int
+    tenant_id: int
+    success: bool
+    new_version: str
+
+# ============ 时序/告警事件 ============
+telemetry.data.received:
+  description: 收到遥测数据（内部高频事件，告警引擎消费）
+  payload:
+    device_id: int
+    tenant_id: int
+    timestamp: datetime
+    metrics: dict
+
+alarm.triggered:
+  description: 告警触发
+  payload:
+    alarm_id: int
+    tenant_id: int
+    device_id: int
+    rule_id: int
+    severity: int
+    title: str
+    content: str
+
+alarm.acked:
+  description: 告警确认
+  payload:
+    alarm_id: int
+    tenant_id: int
+    user_id: int
+
+alarm.resolved:
+  description: 告警处理完成
+  payload:
+    alarm_id: int
+    tenant_id: int
+    user_id: int
+
+# ============ 图像事件 ============
+image.uploaded:
+  description: 图像上传完成
+  payload:
+    image_id: int
+    tenant_id: int
+    device_id: int
+    file_key: str
+    captured_at: datetime
+
+image.batch.ready:
+  description: 图像批次准备完成
+  payload:
+    batch_id: int
+    tenant_id: int
+    image_count: int
+
+cvat.task.created:
+  description: CVAT 任务创建
+  payload:
+    cvat_task_id: int
+    tenant_id: int
+    image_count: int
+
+cvat.annotation.received:
+  description: 标注结果回拉完成
+  payload:
+    cvat_task_id: int
+    tenant_id: int
+    annotation_count: int
+
+# ============ 地磅事件 ============
+weighbridge.weighing.started:
+  description: 开始称重
+  payload:
+    weighbridge_id: int
+    tenant_id: int
+    vehicle_plate: str
+
+weighbridge.ticket.completed:
+  description: 磅单完成
+  payload:
+    ticket_id: int
+    tenant_id: int
+    ticket_no: str
+    net_weight: float
+
+weighbridge.anomaly.detected:
+  description: 异常检测（倒车/压边/作弊）
+  payload:
+    weighbridge_id: int
+    tenant_id: int
+    anomaly_type: str
+
+# ============ 预约/调度事件 ============
+appointment.created:
+  description: 预约创建
+  payload:
+    appointment_id: int
+    tenant_id: int
+    appt_no: str
+    time_slot: str
+
+appointment.arrived:
+  description: 车辆到场
+  payload:
+    appointment_id: int
+    tenant_id: int
+
+appointment.called:
+  description: 叫号
+  payload:
+    appointment_id: int
+    tenant_id: int
+
+appointment.completed:
+  description: 预约完成
+  payload:
+    appointment_id: int
+    tenant_id: int
+
+dispatch.task.assigned:
+  description: 任务派单
+  payload:
+    task_id: int
+    tenant_id: int
+    vehicle_id: int
+    driver_id: int

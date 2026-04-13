@@ -1,0 +1,215 @@
+# 权限标识清单
+# 命名规范: <module>:<resource>:<action>
+# 用于 RBAC 权限校验，存储在 menus 表的 permission 字段
+# 业务代码使用: @require_permissions("system:user:create")
+
+# ============ 系统管理 ============
+system:
+  # 用户管理
+  user:
+    list:        查看用户列表
+    query:       查看用户详情
+    create:      创建用户
+    update:      修改用户
+    delete:      删除用户
+    reset_password: 重置密码
+    assign_role: 分配角色
+    export:      导出用户
+
+  # 角色管理
+  role:
+    list:        查看角色列表
+    query:       查看角色详情
+    create:      创建角色
+    update:      修改角色
+    delete:      删除角色
+    assign_menu: 分配菜单
+    assign_data_scope: 设置数据范围
+
+  # 菜单管理
+  menu:
+    list:        查看菜单列表
+    query:       查看菜单详情
+    create:      创建菜单
+    update:      修改菜单
+    delete:      删除菜单
+
+  # 部门管理
+  dept:
+    list:        查看部门列表
+    query:       查看部门详情
+    create:      创建部门
+    update:      修改部门
+    delete:      删除部门
+
+  # 租户管理（仅超管）
+  tenant:
+    list:        查看租户列表
+    query:       查看租户详情
+    create:      创建租户
+    update:      修改租户
+    delete:      删除租户
+    update_quota: 修改租户配额
+
+  # 审计日志
+  audit:
+    list:        查看审计日志
+    query:       查看日志详情
+    export:      导出审计日志
+
+  # API Key
+  api_key:
+    list:        查看 API Key 列表
+    create:      创建 API Key
+    delete:      删除 API Key
+
+  # OAuth2 客户端
+  oauth2:
+    list:        查看 OAuth2 客户端
+    create:      创建客户端
+    update:      修改客户端
+    delete:      删除客户端
+
+# ============ 设备管理 ============
+device:
+  # 设备
+  device:
+    list:        查看设备列表
+    query:       查看设备详情
+    create:      创建设备
+    update:      修改设备
+    delete:      删除设备
+    enable:      启用设备
+    disable:     禁用设备
+    import:      批量导入
+    export:      导出设备
+    send_command: 下发指令
+    view_shadow: 查看设备影子
+    update_shadow: 修改设备影子
+    view_log:    查看设备日志
+    map_view:    查看地图视图
+
+  # 设备分组
+  group:
+    list:        查看分组列表
+    create:      创建分组
+    update:      修改分组
+    delete:      删除分组
+
+  # OTA 升级
+  ota:
+    list_package: 查看固件包
+    upload_package: 上传固件包
+    delete_package: 删除固件包
+    create_job:  创建升级任务
+    cancel_job:  取消升级任务
+    view_job:    查看升级进度
+
+# ============ 时序数据 ============
+telemetry:
+  data:
+    query:       查询时序数据
+    export:      导出数据
+    aggregate:   聚合查询
+
+  alarm:
+    list:        查看告警列表
+    query:       查看告警详情
+    ack:         确认告警
+    resolve:     处理告警
+    delete:      删除告警
+
+  rule:
+    list:        查看规则列表
+    create:      创建规则
+    update:      修改规则
+    delete:      删除规则
+    enable:      启用规则
+    disable:     禁用规则
+
+# ============ 图像/CVAT ============
+image:
+  image:
+    list:        查看图像列表
+    query:       查看图像详情
+    download:    下载图像
+    delete:      删除图像
+
+  cvat:
+    list_task:   查看 CVAT 任务
+    create_task: 创建 CVAT 任务
+    push_dataset: 推送数据集
+    pull_annotation: 回拉标注
+    delete_task: 删除任务
+
+# ============ 地磅 ============
+weighbridge:
+  device:
+    list:        查看地磅设备
+    create:      添加地磅
+    update:      修改地磅
+    delete:      删除地磅
+
+  ticket:
+    list:        查看磅单列表
+    query:       查看磅单详情
+    create:      创建磅单
+    update:      修改磅单
+    cancel:      作废磅单
+    print:       打印磅单
+    export:      导出磅单
+
+  vehicle:
+    list:        查看车辆列表
+    create:      添加车辆
+    update:      修改车辆
+    delete:      删除车辆
+    blacklist:   加入黑名单
+
+  driver:
+    list:        查看司机列表
+    create:      添加司机
+    update:      修改司机
+    delete:      删除司机
+
+# ============ 预约 ============
+appointment:
+  appointment:
+    list:        查看预约列表
+    query:       查看预约详情
+    create:      创建预约
+    update:      修改预约
+    cancel:      取消预约
+    call:        叫号
+    complete:    完成预约
+    export:      导出
+
+  slot:
+    list:        查看时段配置
+    update:      修改时段配置
+
+# ============ 调度 ============
+dispatch:
+  task:
+    list:        查看调度任务
+    query:       查看任务详情
+    create:      创建任务
+    update:      修改任务
+    assign:      派单
+    cancel:      取消任务
+    export:      导出
+
+  carrier:
+    list:        查看承运商
+    create:      添加承运商
+    update:      修改承运商
+    delete:      删除承运商
+
+# ============ 开放平台 ============
+infra:
+  webhook:
+    list:        查看 Webhook 订阅
+    create:      创建订阅
+    update:      修改订阅
+    delete:      删除订阅
+    retry:       重试投递
