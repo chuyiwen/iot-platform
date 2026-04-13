@@ -3,8 +3,9 @@ title: 初始化后端项目脚手架
 phase: 1
 module: infra
 model: haiku
-status: pending
+status: completed
 created_at: 2026-04-13
+completed_at: 2026-04-13
 
 depends_on: []
 
@@ -46,9 +47,14 @@ token_budget:
   total: 11000
 
 actual_tokens:
-  input: 0
-  output: 0
-  total: 0
+  input: 18000
+  output: 5500
+  total: 23500
+  notes: |
+    实际超出预算约 12k tokens，主要原因：
+    - Haiku 子代理在 uv sync 报错时多次重试调试
+    - 多次 ls/cat 验证文件存在性
+    下次类似任务可在 prompt 中明确「先全部生成再执行命令」减少往返
 
 notes: |
   - 这是第一个任务，没有契约可依赖，直接参考 TECHNICAL_PLAN.md 第九章
