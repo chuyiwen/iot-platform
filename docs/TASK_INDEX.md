@@ -7,12 +7,12 @@
 
 | 状态 | Haiku | Sonnet | Opus | 合计 |
 |------|:-----:|:------:|:----:|:----:|
-| pending | 1 | 1 | 1 | 3 |
+| pending | 0 | 0 | 1 | 1 |
 | in_progress | 0 | 0 | 0 | 0 |
-| completed | 1 | 0 | 0 | 1 |
+| completed | 2 | 1 | 0 | 3 |
 | blocked | 0 | 0 | 0 | 0 |
 
-**Token 预算累计**：~51k tokens（预估） / ~23.5k tokens（实际，已完成 1/4）
+**Token 预算累计**：~51k tokens（预估） / ~60k tokens（实际，已完成 3/4）
 
 ---
 
@@ -23,8 +23,8 @@
 | ID | 标题 | 模型 | 依赖 | 预算 | 状态 |
 |----|------|:----:|------|:----:|:----:|
 | [P1-01-01](tasks/P1-01-01.yaml) | 初始化后端项目脚手架 | haiku | - | 11k | ✅ completed |
-| [P1-01-02](tasks/P1-01-02.yaml) | 初始化 docker-compose 开发环境 | haiku | P1-01-01 | 9k | pending |
-| [P1-02-01](tasks/P1-02-01.yaml) | 实现数据库会话与基础模型 | sonnet | P1-01-01 | 14k | pending |
+| [P1-01-02](tasks/P1-01-02.yaml) | 初始化 docker-compose 开发环境 | haiku | P1-01-01 | 9k | ✅ completed |
+| [P1-02-01](tasks/P1-02-01.yaml) | 实现数据库会话与基础模型 | sonnet | P1-01-01 | 14k | ✅ completed |
 | [P1-03-01](tasks/P1-03-01.yaml) | 实现多租户上下文与 ORM 自动过滤 | opus | P1-02-01 | 17k | pending |
 | P1-03-02 | 租户中间件与 FastAPI 依赖集成 | sonnet | P1-03-01 | — | TBD |
 | P1-04-01 | JWT 认证核心 | sonnet | P1-02-01 | — | TBD |

@@ -3,8 +3,9 @@ title: 初始化 docker-compose 开发环境
 phase: 1
 module: infra
 model: haiku
-status: pending
+status: completed
 created_at: 2026-04-13
+completed_at: 2026-04-13
 
 depends_on:
   - P1-01-01
@@ -46,9 +47,9 @@ token_budget:
   total: 9000
 
 actual_tokens:
-  input: 0
-  output: 0
-  total: 0
+  input: 12000
+  output: 4500
+  total: 16500
 
 notes: |
   - 只做 compose 配置，不启动 backend（backend 还没有实质代码）

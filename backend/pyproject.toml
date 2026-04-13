@@ -41,6 +41,7 @@ dev = [
     "ruff",
     "mypy",
     "pre-commit",
+    "aiosqlite",
 ]
 
 [tool.hatch.build.targets.wheel]

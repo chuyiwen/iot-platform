@@ -3,8 +3,9 @@ title: 实现数据库会话与基础模型
 phase: 1
 module: infra
 model: sonnet
-status: pending
+status: completed
 created_at: 2026-04-13
+completed_at: 2026-04-13
 
 depends_on:
   - P1-01-01
@@ -52,9 +53,11 @@ token_budget:
   total: 14000
 
 actual_tokens:
-  input: 0
-  output: 0
-  total: 0
+  input: 14000
+  output: 6000
+  total: 20000
+  notes: |
+    测试中 BigInteger PK 在 SQLite 不自增，主对话修复 TestItem 覆盖 id 列为 Integer
 
 notes: |
   - 不要实现多租户过滤器（那是 P1-03-xx 的任务）
