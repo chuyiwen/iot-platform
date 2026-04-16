@@ -3,8 +3,9 @@ title: 实现多租户上下文与 SQLAlchemy 自动过滤
 phase: 1
 module: infra
 model: opus
-status: pending
+status: completed
 created_at: 2026-04-13
+completed_at: 2026-04-16
 
 depends_on:
   - P1-02-01
@@ -55,9 +56,10 @@ token_budget:
   total: 17000
 
 actual_tokens:
-  input: 0
-  output: 0
-  total: 0
+  input: 12000
+  output: 8000
+  total: 20000
+  notes: "主对话 Opus 直接实现，含一次修复（lambda 内不能调函数，改为先取值再闭包）"
 
 notes: |
   - 这是架构级任务，用 Opus
